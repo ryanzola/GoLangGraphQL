@@ -2,16 +2,22 @@ package schema
 
 import (
 	"github.com/graphql-go/graphql"
+	"github.com/ryanzola/GoLangGraphQL/data"
 	"github.com/ryanzola/GoLangGraphQL/models"
 )
 
+// Root for all query objects
 var Root graphql.Schema
-var BookType graphql.Object
-var AuthorType graphql.Object
+
+// BookType graphQL object
+var BookType *graphql.Object
+
+// AuthorType graphQL object
+var AuthorType *graphql.Object
 
 func init() {
 	BookType = graphql.NewObject(graphql.ObjectConfig{
-		Name:        "book",
+		Name:        "Book",
 		Description: "Book object",
 		Fields: graphql.FieldsThunk(func() graphql.Fields {
 			return graphql.Fields{
@@ -30,7 +36,7 @@ func init() {
 					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 						if book, ok := p.Source.(*models.Book); ok {
 							// Retrieve the author of the book
-							return data.GetAuthor(author.ID)
+							return data.GetAuthor(book.AuthorID)
 						}
 						return nil, nil
 					},
@@ -40,12 +46,47 @@ func init() {
 	})
 
 	AuthorType = graphql.NewObject(graphql.ObjectConfig{
-		Name:        "author",
+		Name:        "Author",
 		Description: "Author object",
 		Fields: graphql.FieldsThunk(func() graphql.Fields {
 			return graphql.Fields{
-				"id": &graphql.Field{Type: graphql.ID, Description: "Author Id"},
+				"id": &graphql.Field{
+					Type: graphql.ID, Description: "Author Id",
+				},
 			}
 		}),
 	})
+
+	var err error
+	Root, err := graphql.NewSchema(graphql.SchemaConfig{
+		Query: graphql.NewObject(graphql.ObjectConfig{
+			Name:        "Root Query",
+			Description: "Root for all query objects on the GraphQL server",
+			Fields: graphql.Fields{
+				"books": &graphql.Field{
+					Type:        graphql.NewList(BookType),
+					Description: "Get a list of all books",
+				},
+				"book": &graphql.Field{
+					Type:        BookType,
+					Description: "Get a single book",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+					},
+					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+						id := ""
+						if v, ok := p.Args["id"].(string); ok {
+							id = v
+						}
+						return data.GetBook(id)
+					},
+				},
+			},
+		}),
+	})
+	if err != nil {
+		panic(err)
+	}
 }
