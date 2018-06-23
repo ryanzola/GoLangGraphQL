@@ -64,7 +64,7 @@ func init() {
 					Description: "All books by author",
 					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 						if author, ok := p.Source.(*models.Author); ok {
-							return data.GetAllBooksByAuthor(author.ID)
+							return data.getAllBooksByAuthor(author.ID)
 						}
 						return nil, nil
 					},
@@ -97,6 +97,26 @@ func init() {
 							id = v
 						}
 						return data.GetBook(id)
+					},
+				},
+				"authors": &graphql.Field{
+					Type:        graphql.NewList(AuthorType),
+					Description: "Get a list of all authors",
+				},
+				"author": &graphql.Field{
+					Type:        AuthorType,
+					Description: "Get a single author",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+					},
+					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+						id := ""
+						if v, ok := p.Args["id"].(string); ok {
+							id = v
+						}
+						return data.GetAuthor(id)
 					},
 				},
 			},
