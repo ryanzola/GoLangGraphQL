@@ -76,12 +76,15 @@ func init() {
 	var err error
 	Root, err = graphql.NewSchema(graphql.SchemaConfig{
 		Query: graphql.NewObject(graphql.ObjectConfig{
-			Name:        "Root Query",
+			Name:        "RootQuery",
 			Description: "Root for all query objects on the GraphQL server",
 			Fields: graphql.Fields{
 				"books": &graphql.Field{
 					Type:        graphql.NewList(BookType),
 					Description: "Get a list of all books",
+					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+						return data.GetBooks()
+					},
 				},
 				"book": &graphql.Field{
 					Type:        BookType,
