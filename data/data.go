@@ -3,7 +3,7 @@ package data
 import (
 	"fmt"
 
-	"github.com/ryanzola/GoLangGraphQL/models"
+	"github.com/ryanzola/GoLangGraphQL/server/models"
 )
 
 // Books object model

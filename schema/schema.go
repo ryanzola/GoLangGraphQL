@@ -2,8 +2,8 @@ package schema
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/ryanzola/GoLangGraphQL/data"
-	"github.com/ryanzola/GoLangGraphQL/models"
+	"github.com/ryanzola/GoLangGraphQL/server/data"
+	"github.com/ryanzola/GoLangGraphQL/server/models"
 )
 
 // Schema for all query objects
