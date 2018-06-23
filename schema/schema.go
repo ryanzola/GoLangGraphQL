@@ -74,7 +74,7 @@ func init() {
 	})
 
 	var err error
-	Root, err := graphql.NewSchema(graphql.SchemaConfig{
+	Root, err = graphql.NewSchema(graphql.SchemaConfig{
 		Query: graphql.NewObject(graphql.ObjectConfig{
 			Name:        "Root Query",
 			Description: "Root for all query objects on the GraphQL server",
