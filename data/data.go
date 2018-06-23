@@ -62,7 +62,7 @@ func GetBooks() ([]*models.Book, error) {
 	if len(Books) > 0 {
 		return Books, nil
 	}
-	return nil, fmt.Errorf("There are no books")
+	return nil, fmt.Errorf("There doesn't appear to be any books")
 }
 
 //GetAuthor retrieves an author for a given user ID

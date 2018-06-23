@@ -6,8 +6,8 @@ import (
 	"github.com/ryanzola/GoLangGraphQL/models"
 )
 
-// Root for all query objects
-var Root graphql.Schema
+// RootQuery for all query objects
+var RootQuery graphql.Schema
 
 // BookType graphQL object
 var BookType *graphql.Object
@@ -74,14 +74,17 @@ func init() {
 	})
 
 	var err error
-	Root, err = graphql.NewSchema(graphql.SchemaConfig{
+	RootQuery, err = graphql.NewSchema(graphql.SchemaConfig{
 		Query: graphql.NewObject(graphql.ObjectConfig{
-			Name:        "Root Query",
+			Name:        "RootQuery",
 			Description: "Root for all query objects on the GraphQL server",
 			Fields: graphql.Fields{
 				"books": &graphql.Field{
 					Type:        graphql.NewList(BookType),
 					Description: "Get a list of all books",
+					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+						return data.GetBooks()
+					},
 				},
 				"book": &graphql.Field{
 					Type:        BookType,
@@ -102,6 +105,9 @@ func init() {
 				"authors": &graphql.Field{
 					Type:        graphql.NewList(AuthorType),
 					Description: "Get a list of all authors",
+					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+						return data.GetAuthors()
+					},
 				},
 				"author": &graphql.Field{
 					Type:        AuthorType,

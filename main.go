@@ -45,7 +45,8 @@ func main() {
 
 	// GraphQL Endpoint
 	http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
-		result := serveGraphQL(r.URL.Query().Get("query"), schema.Root)
+		result := serveGraphQL(r.URL.Query().Get("query"), schema.RootQuery)
+		log.Print(result)
 		json.NewEncoder(w).Encode(result)
 	})
 	http.HandleFunc("/", graphiql.ServeGraphiQL)
