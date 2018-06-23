@@ -57,6 +57,14 @@ func GetBook(id string) (*models.Book, error) {
 	return nil, fmt.Errorf("Book (id: %v) was not found", id)
 }
 
+// GetBooks gets all the books
+func GetBooks() ([]*models.Book, error) {
+	if len(Books) > 0 {
+		return Books, nil
+	}
+	return nil, fmt.Errorf("There are no books")
+}
+
 //GetAuthor retrieves an author for a given user ID
 func GetAuthor(id string) (*models.Author, error) {
 	for _, author := range Authors {
@@ -65,6 +73,14 @@ func GetAuthor(id string) (*models.Author, error) {
 		}
 	}
 	return nil, fmt.Errorf("Author (id: %v) was not found", id)
+}
+
+// GetAuthors returns all of the authors
+func GetAuthors() ([]*models.Author, error) {
+	if len(Authors) > 0 {
+		return Authors, nil
+	}
+	return nil, fmt.Errorf("There doesn't appear to be any authors")
 }
 
 // GetAllBooksByAuthor returns an array of books by an author
