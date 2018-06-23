@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-chi/chi"
 	"github.com/graphql-go/graphql"
+	"github.com/mnmtanish/go-graphiql"
 	"github.com/unrolled/render"
 
 	"github.com/ryanzola/GoLangGraphQL/schema"
@@ -42,17 +42,17 @@ func serveGraphQL(query string, schema graphql.Schema) *graphql.Result {
 }
 
 func main() {
-	r := chi.NewRouter()
 
 	// GraphQL Endpoint
 	http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
 		result := serveGraphQL(r.URL.Query().Get("query"), schema.Root)
 		json.NewEncoder(w).Encode(result)
 	})
+	http.HandleFunc("/", graphiql.ServeGraphiQL)
 
-	bind := fmt.Sprintf("%s", PORT)
+	bind := fmt.Sprintf(":%s", PORT)
 
 	log.Printf("Starting server on port %s", bind)
 
-	log.Fatal(http.ListenAndServe(bind, r))
+	log.Fatal(http.ListenAndServe(bind, nil))
 }
