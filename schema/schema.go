@@ -64,7 +64,7 @@ func init() {
 					Description: "All books by author",
 					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 						if author, ok := p.Source.(*models.Author); ok {
-							return data.getAllBooksByAuthor(author.ID)
+							return data.GetAllBooksByAuthor(author.ID)
 						}
 						return nil, nil
 					},

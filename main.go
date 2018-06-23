@@ -1,13 +1,15 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 	"github.com/unrolled/render"
 	"golang.org/x/net/context"
-
+	"github.com/go-chi/chi"
 	"github.com/ryanzola/GoLangGraphQL/schema"
 )
 
@@ -28,15 +30,27 @@ func serveGraphQL(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	opts := handler.NewRequestOptions(r)
 
 	//execute graphQL query
-	params := graphql.Params{
+	params := graphql.Params{ 
 		Schema: schema.Root,
 		RequestString: opts.Query,
 		VariableValues: opts.Variables,
 		OperationName: opts.OperationName,
 		Context: ctx
 	}
+	result := graphql.Do(params)
+
+	R.JSON(w, http.StatusOK, result)
 }
 
 func main() {
+	r := chi.NewRouter()
 
+	// GraphQL endpoint
+	r.Handle("/graphql", serveGraphQL)
+
+	bind := fmt.Sprintf("%s", PORT)
+
+	log.Printf("Starting server on port %s", bind)
+
+	http.ListenAndServe(bind, r)
 }
