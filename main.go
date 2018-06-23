@@ -31,22 +31,22 @@ func serveGraphQL(query string, schema graphql.Schema) *graphql.Result {
 	// helper to parse request query
 
 	// execute graphql query
-	params := graphql.Params{
+	result := graphql.Do(graphql.Params{
 		Schema:        schema,
 		RequestString: query,
+	})
+	if len(result.Errors) > 0 {
+		fmt.Printf("wrong result, unexpected errors: %v", result.Errors)
 	}
-	result := graphql.Do(params)
 
 	return result
-
 }
 
 func main() {
 
 	// GraphQL Endpoint
 	http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
-		result := serveGraphQL(r.URL.Query().Get("query"), schema.RootQuery)
-		log.Print(result)
+		result := serveGraphQL(r.URL.Query().Get("query"), schema.schema)
 		json.NewEncoder(w).Encode(result)
 	})
 	http.HandleFunc("/", graphiql.ServeGraphiQL)

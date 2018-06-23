@@ -6,8 +6,8 @@ import (
 	"github.com/ryanzola/GoLangGraphQL/models"
 )
 
-// RootQuery for all query objects
-var RootQuery graphql.Schema
+// Schema for all query objects
+var Schema graphql.Schema
 
 // BookType graphQL object
 var BookType *graphql.Object
@@ -73,60 +73,73 @@ func init() {
 		}),
 	})
 
-	var err error
-	RootQuery, err = graphql.NewSchema(graphql.SchemaConfig{
-		Query: graphql.NewObject(graphql.ObjectConfig{
-			Name:        "RootQuery",
-			Description: "Root for all query objects on the GraphQL server",
-			Fields: graphql.Fields{
-				"books": &graphql.Field{
-					Type:        graphql.NewList(BookType),
-					Description: "Get a list of all books",
-					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-						return data.GetBooks()
-					},
-				},
-				"book": &graphql.Field{
-					Type:        BookType,
-					Description: "Get a single book",
-					Args: graphql.FieldConfigArgument{
-						"id": &graphql.ArgumentConfig{
-							Type: graphql.String,
-						},
-					},
-					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-						id := ""
-						if v, ok := p.Args["id"].(string); ok {
-							id = v
-						}
-						return data.GetBook(id)
-					},
-				},
-				"authors": &graphql.Field{
-					Type:        graphql.NewList(AuthorType),
-					Description: "Get a list of all authors",
-					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-						return data.GetAuthors()
-					},
-				},
-				"author": &graphql.Field{
-					Type:        AuthorType,
-					Description: "Get a single author",
-					Args: graphql.FieldConfigArgument{
-						"id": &graphql.ArgumentConfig{
-							Type: graphql.String,
-						},
-					},
-					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-						id := ""
-						if v, ok := p.Args["id"].(string); ok {
-							id = v
-						}
-						return data.GetAuthor(id)
-					},
+	var rootQuery = graphql.NewObject(graphql.ObjectConfig{
+		Name:        "RootQuery",
+		Description: "Root for all query objects on the GraphQL server",
+		Fields: graphql.Fields{
+			"books": &graphql.Field{
+				Type:        graphql.NewList(BookType),
+				Description: "Get a list of all books",
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					return data.GetBooks()
 				},
 			},
-		}),
+			"book": &graphql.Field{
+				Type:        BookType,
+				Description: "Get a single book",
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					id := ""
+					if v, ok := p.Args["id"].(string); ok {
+						id = v
+					}
+					return data.GetBook(id)
+				},
+			},
+			"authors": &graphql.Field{
+				Type:        graphql.NewList(AuthorType),
+				Description: "Get a list of all authors",
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					return data.GetAuthors()
+				},
+			},
+			"author": &graphql.Field{
+				Type:        AuthorType,
+				Description: "Get a single author",
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					id := ""
+					if v, ok := p.Args["id"].(string); ok {
+						id = v
+					}
+					return data.GetAuthor(id)
+				},
+			},
+		},
+	})
+
+	var rootMutation = graphql.NewObject(graphql.ObjectConfig{
+		Name: "RootMutation",
+		Fields: graphql.Fields{
+			"addAuthor": &graphql.Field{
+				Type:        AuthorType,
+				Description: "Add a new author",
+			},
+		},
+	})
+
+	var err error
+	Schema, err = graphql.NewSchema(graphql.SchemaConfig{
+		Query:    rootQuery,
+		Mutation: rootMutation,
 	})
 	if err != nil {
 		panic(err)
