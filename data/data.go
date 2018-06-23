@@ -66,3 +66,14 @@ func GetAuthor(id string) (*models.Author, error) {
 	}
 	return nil, fmt.Errorf("Author (id: %v) was not found", id)
 }
+
+// GetAllBooksByAuthor returns an array of books by an author
+func GetAllBooksByAuthor(authorID string) ([]*models.Book, error) {
+	var bookSlice []*models.Book
+	for _, book := range Books {
+		if book.AuthorID == authorID {
+			bookSlice = append(bookSlice, book)
+		}
+	}
+	return bookSlice, nil
+}

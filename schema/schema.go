@@ -51,7 +51,23 @@ func init() {
 		Fields: graphql.FieldsThunk(func() graphql.Fields {
 			return graphql.Fields{
 				"id": &graphql.Field{
-					Type: graphql.ID, Description: "Author Id",
+					Type:        graphql.ID,
+					Description: "Author Id"},
+				"name": &graphql.Field{
+					Type:        graphql.String,
+					Description: "Author name"},
+				"age": &graphql.Field{
+					Type:        graphql.Int,
+					Description: "Author age"},
+				"books": &graphql.Field{
+					Type:        graphql.NewList(BookType),
+					Description: "All books by author",
+					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+						if author, ok := p.Source(*models.Author); ok {
+							return data.GetAllBooksByAuthor(author.ID)
+						}
+						return nil, nil
+					},
 				},
 			}
 		}),
